@@ -92,6 +92,21 @@ function parseGvizDate(value) {
   return new Date(y, mo, d, h, mi, s);
 }
 
+const INDO_MONTHS = [
+  'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+];
+
+// e.g. "24 Februari 2026"
+function formatIndoDate(date) {
+  return `${date.getDate()} ${INDO_MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+}
+
+function dateKeyToDate(key) {
+  const [y, mo, d] = key.split('-').map(Number);
+  return new Date(y, mo - 1, d);
+}
+
 // ---- Aggregation helpers ---------------------------------------------------
 function normalizeKey(value) {
   const key = (value ?? '').toString().trim();
@@ -324,7 +339,7 @@ function renderDashboard(dashboardRows, responseRows) {
   upsertChart('chart-submissions', {
     type: 'line',
     data: {
-      labels: [...dateCounts.keys()],
+      labels: [...dateCounts.keys()].map((k) => formatIndoDate(dateKeyToDate(k))),
       datasets: [
         {
           label: 'Jumlah Submission',
@@ -359,7 +374,9 @@ async function loadAndRender() {
     renderDashboard(dashboardRows, responseRows);
 
     errorBanner.hidden = true;
-    document.getElementById('last-updated').textContent = `Terakhir diperbarui: ${new Date().toLocaleTimeString('id-ID')}`;
+    const now = new Date();
+    document.getElementById('last-updated').textContent =
+      `Terakhir diperbarui: ${formatIndoDate(now)}, ${now.toLocaleTimeString('id-ID')}`;
   } catch (err) {
     console.error(err);
     errorBanner.hidden = false;

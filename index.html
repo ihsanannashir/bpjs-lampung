@@ -96,12 +96,24 @@
       </section>
 
       <section class="chart-card">
-        <h2>Sebaran Peserta di Peta Lampung</h2>
+        <h2>Sebaran Peserta</h2>
         <p class="muted small">
           Ukuran lingkaran = jumlah peserta di kabupaten/kota tersebut. Klik
           lingkaran untuk detail.
         </p>
         <div id="map" class="map-container"></div>
+        <div class="table-wrap map-summary-wrap">
+          <table id="map-summary-table">
+            <thead>
+              <tr>
+                <th>Kabupaten/Kota</th>
+                <th>Jumlah Peserta</th>
+                <th>Rata-rata Peningkatan</th>
+              </tr>
+            </thead>
+            <tbody id="map-summary-body"></tbody>
+          </table>
+        </div>
       </section>
 
       <section class="chart-card">

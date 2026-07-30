@@ -184,6 +184,11 @@ html, body {
   border: 1px solid var(--border);
 }
 
+.map-summary-wrap {
+  margin-top: 12px;
+  max-height: 280px;
+}
+
 .table-wrap {
   max-height: 420px;
   overflow: auto;

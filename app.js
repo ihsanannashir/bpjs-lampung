@@ -247,6 +247,26 @@ function renderMap(kabupatenCounts, kabupatenAvgImprove) {
     );
     marker.addTo(markerLayer);
   }
+
+  renderMapSummary(kabupatenCounts, kabupatenAvgImprove);
+}
+
+function renderMapSummary(kabupatenCounts, kabupatenAvgImprove) {
+  const rows = Object.keys(LAMPUNG_CENTROIDS)
+    .map((name) => ({ name, count: kabupatenCounts.get(name) || 0, avgImprove: kabupatenAvgImprove.get(name) }))
+    .filter((r) => r.count > 0)
+    .sort((a, b) => b.count - a.count);
+
+  const body = document.getElementById('map-summary-body');
+  body.innerHTML = rows
+    .map(
+      (r) => `<tr>
+        <td>${r.name}</td>
+        <td>${r.count}</td>
+        <td>${r.avgImprove !== undefined ? `+${r.avgImprove.toFixed(1)}` : '-'}</td>
+      </tr>`
+    )
+    .join('');
 }
 
 // ---- Rendering ---------------------------------------------------------------

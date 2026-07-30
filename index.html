@@ -1,118 +1,128 @@
 <!doctype html>
 <html lang="id">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Dashboard Monitoring JKN - Lampung</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<link rel="stylesheet" href="style.css" />
-</head>
-<body>
-<div class="viz-root">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Monitoring JKN - Lampung</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="viz-root">
+      <header class="app-header">
+        <div>
+          <h1>Dashboard Monitoring Sosialisasi JKN &ndash; Provinsi Lampung</h1>
+          <p class="subtitle">Data bersumber dari hasil survey Google Form.</p>
+        </div>
+        <div class="header-actions">
+          <span id="last-updated" class="muted">Memuat data&hellip;</span>
+          <button id="refresh-btn" type="button">Refresh</button>
+        </div>
+      </header>
 
-  <header class="app-header">
-    <div>
-      <h1>Dashboard Monitoring Sosialisasi JKN &ndash; Provinsi Lampung</h1>
-      <p class="subtitle">Data ditarik langsung dari Google Sheet hasil Google Form (Sheet &ldquo;COBA DASHBOARD&rdquo;)</p>
-    </div>
-    <div class="header-actions">
-      <span id="last-updated" class="muted">Memuat data&hellip;</span>
-      <button id="refresh-btn" type="button">Segarkan sekarang</button>
-    </div>
-  </header>
+      <div id="error-banner" class="error-banner" hidden></div>
 
-  <div id="error-banner" class="error-banner" hidden></div>
+      <section class="kpi-row" id="kpi-row" aria-label="Ringkasan angka utama">
+        <div class="stat-tile">
+          <span class="stat-label">Total Peserta</span>
+          <span class="stat-value" id="kpi-total">&ndash;</span>
+        </div>
+        <div class="stat-tile">
+          <span class="stat-label">Rata-rata Pre-Test</span>
+          <span class="stat-value" id="kpi-pre">&ndash;</span>
+        </div>
+        <div class="stat-tile">
+          <span class="stat-label">Rata-rata Post-Test</span>
+          <span class="stat-value" id="kpi-post">&ndash;</span>
+        </div>
+        <div class="stat-tile">
+          <span class="stat-label">Rata-rata Peningkatan</span>
+          <span class="stat-value" id="kpi-improve">&ndash;</span>
+        </div>
+        <div class="stat-tile">
+          <span class="stat-label">Sudah Post-Test</span>
+          <span class="stat-value" id="kpi-completion">&ndash;</span>
+        </div>
+      </section>
 
-  <section class="kpi-row" id="kpi-row" aria-label="Ringkasan angka utama">
-    <div class="stat-tile">
-      <span class="stat-label">Total Peserta</span>
-      <span class="stat-value" id="kpi-total">&ndash;</span>
-    </div>
-    <div class="stat-tile">
-      <span class="stat-label">Rata-rata Pre-Test</span>
-      <span class="stat-value" id="kpi-pre">&ndash;</span>
-    </div>
-    <div class="stat-tile">
-      <span class="stat-label">Rata-rata Post-Test</span>
-      <span class="stat-value" id="kpi-post">&ndash;</span>
-    </div>
-    <div class="stat-tile">
-      <span class="stat-label">Rata-rata Peningkatan</span>
-      <span class="stat-value" id="kpi-improve">&ndash;</span>
-    </div>
-    <div class="stat-tile">
-      <span class="stat-label">Sudah Post-Test</span>
-      <span class="stat-value" id="kpi-completion">&ndash;</span>
-    </div>
-  </section>
+      <section class="charts-grid">
+        <div class="chart-card">
+          <h2>Jumlah Peserta per Kabupaten/Kota</h2>
+          <div class="canvas-wrap"><canvas id="chart-kabupaten"></canvas></div>
+        </div>
 
-  <section class="charts-grid">
-    <div class="chart-card">
-      <h2>Jumlah Peserta per Kabupaten/Kota</h2>
-      <div class="canvas-wrap"><canvas id="chart-kabupaten"></canvas></div>
+        <div class="chart-card">
+          <h2>Segmen Peserta</h2>
+          <div class="donut-layout">
+            <div class="canvas-wrap donut-canvas">
+              <canvas id="chart-segmen"></canvas>
+            </div>
+            <ul class="direct-legend" id="legend-segmen"></ul>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <h2>Status Post-Test</h2>
+          <div class="donut-layout">
+            <div class="canvas-wrap donut-canvas">
+              <canvas id="chart-status"></canvas>
+            </div>
+            <ul class="direct-legend" id="legend-status"></ul>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <h2>Rata-rata Nilai per Kabupaten: Pre-Test vs Post-Test</h2>
+          <div class="canvas-wrap"><canvas id="chart-prepost"></canvas></div>
+        </div>
+
+        <div class="chart-card chart-card-wide">
+          <h2>Jumlah Submission Form per Tanggal</h2>
+          <div class="canvas-wrap">
+            <canvas id="chart-submissions"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section class="chart-card">
+        <h2>Sebaran Peserta di Peta Lampung</h2>
+        <p class="muted small">
+          Ukuran lingkaran = jumlah peserta di kabupaten/kota tersebut. Klik
+          lingkaran untuk detail.
+        </p>
+        <div id="map" class="map-container"></div>
+      </section>
+
+      <section class="chart-card">
+        <h2>Data Peserta</h2>
+        <div class="table-wrap">
+          <table id="data-table">
+            <thead>
+              <tr>
+                <th>Nama</th>
+                <th>Kabupaten</th>
+                <th>Tempat Kegiatan</th>
+                <th>Segmen Peserta</th>
+                <th>Pre-Test</th>
+                <th>Post-Test</th>
+                <th>Peningkatan</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer class="app-footer muted small">
+        Sumber data: Google Sheet. Refresh otomatis setiap beberapa menit.
+      </footer>
     </div>
-
-    <div class="chart-card">
-      <h2>Segmen Peserta</h2>
-      <div class="donut-layout">
-        <div class="canvas-wrap donut-canvas"><canvas id="chart-segmen"></canvas></div>
-        <ul class="direct-legend" id="legend-segmen"></ul>
-      </div>
-    </div>
-
-    <div class="chart-card">
-      <h2>Status Post-Test</h2>
-      <div class="donut-layout">
-        <div class="canvas-wrap donut-canvas"><canvas id="chart-status"></canvas></div>
-        <ul class="direct-legend" id="legend-status"></ul>
-      </div>
-    </div>
-
-    <div class="chart-card">
-      <h2>Rata-rata Nilai per Kabupaten: Pre-Test vs Post-Test</h2>
-      <div class="canvas-wrap"><canvas id="chart-prepost"></canvas></div>
-    </div>
-
-    <div class="chart-card chart-card-wide">
-      <h2>Jumlah Submission Form per Tanggal</h2>
-      <div class="canvas-wrap"><canvas id="chart-submissions"></canvas></div>
-    </div>
-  </section>
-
-  <section class="chart-card">
-    <h2>Sebaran Peserta di Peta Lampung</h2>
-    <p class="muted small">Ukuran lingkaran = jumlah peserta di kabupaten/kota tersebut. Klik lingkaran untuk detail.</p>
-    <div id="map" class="map-container"></div>
-  </section>
-
-  <section class="chart-card">
-    <h2>Data Peserta</h2>
-    <div class="table-wrap">
-      <table id="data-table">
-        <thead>
-          <tr>
-            <th>Nama</th>
-            <th>Kabupaten</th>
-            <th>Tempat Kegiatan</th>
-            <th>Segmen Peserta</th>
-            <th>Pre-Test</th>
-            <th>Post-Test</th>
-            <th>Peningkatan</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="table-body"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <footer class="app-footer muted small">
-    Sumber data: Google Sheet (lihat <code>CONFIG.SHEET_ID</code> di app.js). Menyegarkan otomatis setiap beberapa menit.
-  </footer>
-
-</div>
-<script src="app.js"></script>
-</body>
+    <script src="app.js"></script>
+  </body>
 </html>

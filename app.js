@@ -303,7 +303,7 @@ function renderDashboard(dashboardRows, responseRows) {
       labels: kabupatenNames,
       datasets: [
         { label: 'Pre-Test', data: kabupatenNames.map((k) => avgPre.get(k) || 0), backgroundColor: cssVar('--series-1') },
-        { label: 'Post-Test', data: kabupatenNames.map((k) => avgPost.get(k) || 0), backgroundColor: cssVar('--series-3') },
+        { label: 'Post-Test', data: kabupatenNames.map((k) => avgPost.get(k) || 0), backgroundColor: cssVar('--series-4') },
       ],
     },
     options: baseChartOptions(),

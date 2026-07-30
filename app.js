@@ -194,7 +194,17 @@ let markerLayer = null;
 
 function renderMap(kabupatenCounts, kabupatenAvgImprove) {
   if (!mapInstance) {
-    mapInstance = L.map('map').setView([-4.95, 105.0], 8);
+    // Locked to Lampung: viewers can click markers for details, but can't
+    // pan/zoom the map away from this view (accidental or otherwise).
+    mapInstance = L.map('map', {
+      dragging: false,
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+      boxZoom: false,
+      touchZoom: false,
+      keyboard: false,
+      zoomControl: false,
+    }).setView([-4.95, 105.0], 8);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors',
       maxZoom: 12,

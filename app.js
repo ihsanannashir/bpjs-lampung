@@ -107,6 +107,18 @@ function dateKeyToDate(key) {
   return new Date(y, mo - 1, d);
 }
 
+const AGE_BUCKETS = ['<20', '20-29', '30-39', '40-49', '50-59', '60+'];
+function ageBucket(value) {
+  const age = Number(value);
+  if (!Number.isFinite(age)) return null;
+  if (age < 20) return '<20';
+  if (age < 30) return '20-29';
+  if (age < 40) return '30-39';
+  if (age < 50) return '40-49';
+  if (age < 60) return '50-59';
+  return '60+';
+}
+
 // ---- Aggregation helpers ---------------------------------------------------
 function normalizeKey(value) {
   const key = (value ?? '').toString().trim();
@@ -338,6 +350,39 @@ function renderDashboard(dashboardRows, responseRows) {
   });
   renderDirectLegend('legend-status', statusEntries, statusColors);
 
+  // Donut: Demografi Peserta (Jenis Kelamin) - from the raw response tab,
+  // since the Dashboard tab doesn't carry gender/age.
+  const genderCounts = countBy(responseRows, 'Jenis Kelamin');
+  const genderOrder = ['Laki-Laki', 'Perempuan'];
+  const genderEntries = genderOrder.filter((g) => genderCounts.has(g)).map((g) => [g, genderCounts.get(g)]);
+  for (const [k, v] of genderCounts) if (!genderOrder.includes(k)) genderEntries.push([k, v]);
+  const genderColors = [cssVar('--series-1'), cssVar('--series-2'), cssVar('--series-3'), cssVar('--series-4')];
+  upsertChart('chart-gender', {
+    type: 'doughnut',
+    data: {
+      labels: genderEntries.map(([k]) => k),
+      datasets: [{ data: genderEntries.map(([, v]) => v), backgroundColor: genderColors }],
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } },
+  });
+  renderDirectLegend('legend-gender', genderEntries, genderColors);
+
+  // Bar: Kategori Usia - bucketed from the raw response tab's numeric Usia field
+  const ageCounts = new Map();
+  for (const r of responseRows) {
+    const bucket = ageBucket(r['Usia']);
+    if (!bucket) continue;
+    ageCounts.set(bucket, (ageCounts.get(bucket) || 0) + 1);
+  }
+  upsertChart('chart-age', {
+    type: 'bar',
+    data: {
+      labels: AGE_BUCKETS,
+      datasets: [{ label: 'Jumlah Peserta', data: AGE_BUCKETS.map((b) => ageCounts.get(b) || 0), backgroundColor: cssVar('--series-1') }],
+    },
+    options: baseChartOptions({ plugins: { legend: { display: false } } }),
+  });
+
   // Grouped bar: avg Pre vs Post per Kabupaten
   const avgPre = avgByGroup(dashboardRows, 'Kabupaten', 'Nilai Pre Test');
   const avgPost = avgByGroup(dashboardRows, 'Kabupaten', 'Nilai Post Test');
@@ -396,7 +441,7 @@ async function loadAndRender() {
     errorBanner.hidden = true;
     const now = new Date();
     document.getElementById('last-updated').textContent =
-      `Terakhir diperbarui: ${formatIndoDate(now)}, ${now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`;
+      `Terakhir diperbarui: ${formatIndoDate(now)}, ${now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB`;
   } catch (err) {
     console.error(err);
     errorBanner.hidden = false;

@@ -1,11 +1,14 @@
 * { box-sizing: border-box; }
 
+html {
+  color-scheme: light;
+}
 html, body {
   margin: 0;
   padding: 0;
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  background: var(--page-plane);
-  color: var(--text-primary);
+  background: #f9f9f7;
+  color: #0b0b0b;
 }
 
 .viz-root {
@@ -34,47 +37,6 @@ html, body {
   padding: 24px;
   max-width: 1280px;
   margin: 0 auto;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:where(:not([data-theme="light"])) .viz-root {
-    color-scheme: dark;
-    --page-plane:     #0d0d0d;
-    --surface-1:      #1a1a19;
-    --text-primary:   #ffffff;
-    --text-secondary: #c3c2b7;
-    --text-muted:     #898781;
-    --gridline:       #2c2c2a;
-    --baseline:       #383835;
-    --border:         rgba(255,255,255,0.10);
-
-    --series-1: #3987e5;
-    --series-2: #d95926;
-    --series-3: #199e70;
-    --series-4: #c98500;
-
-    --status-good:    #0ca30c;
-    --status-warning: #fab219;
-  }
-}
-:root[data-theme="dark"] .viz-root {
-  color-scheme: dark;
-  --page-plane:     #0d0d0d;
-  --surface-1:      #1a1a19;
-  --text-primary:   #ffffff;
-  --text-secondary: #c3c2b7;
-  --text-muted:     #898781;
-  --gridline:       #2c2c2a;
-  --baseline:       #383835;
-  --border:         rgba(255,255,255,0.10);
-
-  --series-1: #3987e5;
-  --series-2: #d95926;
-  --series-3: #199e70;
-  --series-4: #c98500;
-
-  --status-good:    #0ca30c;
-  --status-warning: #fab219;
 }
 
 .app-header {

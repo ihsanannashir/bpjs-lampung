@@ -376,7 +376,7 @@ async function loadAndRender() {
     errorBanner.hidden = true;
     const now = new Date();
     document.getElementById('last-updated').textContent =
-      `Terakhir diperbarui: ${formatIndoDate(now)}, ${now.toLocaleTimeString('id-ID')}`;
+      `Terakhir diperbarui: ${formatIndoDate(now)}, ${now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`;
   } catch (err) {
     console.error(err);
     errorBanner.hidden = false;
